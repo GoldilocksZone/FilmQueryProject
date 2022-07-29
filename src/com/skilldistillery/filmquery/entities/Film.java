@@ -2,7 +2,6 @@ package com.skilldistillery.filmquery.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,15 +10,14 @@ public class Film {
 	private short languageId, length;
 	private int id;
 	private BigDecimal rentalRate, replacementCost;
-	private String title, description, rating;
-	private String[] specialFeatures;
+	private String title, description, language, rating, specialFeatures;
 	private LocalDate releaseYear;
 	private List<Actor> cast;
 
 	public Film() {
-		
+
 	}
-	
+
 	/**
 	 * @param rentalDuration
 	 * @param languageId
@@ -33,19 +31,22 @@ public class Film {
 	 * @param releaseYear
 	 * @param rating
 	 */
-	public Film(int id, String title, String description, LocalDate releaseYear, short languageId, byte rentalDuration, BigDecimal rentalRate, short length, 
-			BigDecimal replacementCost, String rating, String[] specialFeatures) {
+	public Film(int id, String title, String description, LocalDate releaseYear, short languageId, String language, byte rentalDuration,
+			BigDecimal rentalRate, short length, BigDecimal replacementCost, String rating, String specialFeatures,
+			List<Actor> cast) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.releaseYear = releaseYear;
 		this.languageId = languageId;
+		this.language = language;
 		this.rentalDuration = rentalDuration;
 		this.rentalRate = rentalRate;
 		this.length = length;
 		this.replacementCost = replacementCost;
 		this.rating = rating;
 		this.specialFeatures = specialFeatures;
+		this.cast = cast;
 	}
 
 	/**
@@ -76,6 +77,20 @@ public class Film {
 		this.languageId = languageId;
 	}
 
+	/**
+	 * @return the language
+	 */
+	public String getLanguage() {
+		return language;
+	}
+
+	/**
+	 * @param language the language to set
+	 */
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
 	/**
 	 * @return the length
 	 */
@@ -163,14 +178,14 @@ public class Film {
 	/**
 	 * @return the specialFeatures
 	 */
-	public String[] getSpecialFeatures() {
+	public String getSpecialFeatures() {
 		return specialFeatures;
 	}
 
 	/**
 	 * @param specialFeatures the specialFeatures to set
 	 */
-	public void setSpecialFeatures(String[] specialFeatures) {
+	public void setSpecialFeatures(String specialFeatures) {
 		this.specialFeatures = specialFeatures;
 	}
 
@@ -202,19 +217,39 @@ public class Film {
 		this.rating = rating;
 	}
 
+	/**
+	 * @return the cast
+	 */
+	public List<Actor> getCast() {
+		return cast;
+	}
+
+	/**
+	 * @param cast the cast to set
+	 */
+	public void setCast(List<Actor> cast) {
+		this.cast = cast;
+	}
+
 	@Override
 	public String toString() {
-		return null;
+		StringBuilder sb = new StringBuilder();
+		sb.append("*".repeat(this.getTitle().length() + 11)).append("\n")
+		.append("* " + this.getTitle() + " (" + this.getReleaseYear().getYear() + ") *").append("\n")
+		.append("*".repeat(this.getTitle().length() + 11)).append("\n\n")
+		.append(this.getDescription()).append("\n\n")
+		.append("Rating: " + this.getRating() + " \t" + "Run Time: " + this.getLength() + " min" + "\t" + "Language: " + this.getLanguage()).append("\n")
+		.append("Special Features: " + this.getSpecialFeatures()).append("\n\n")
+		.append("Rental Rate: $" + this.getRentalRate() + "\t" + "Replacement Cost: $" + this.getReplacementCost()).append("\n")
+		.append("-".repeat(this.getTitle().length() + 11)).append("\n")
+		.append("\n");
+		return sb.toString();
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(specialFeatures);
-		result = prime * result + Objects.hash(description, id, languageId, length, rating, releaseYear, rentalDuration,
-				rentalRate, replacementCost, title);
-		return result;
+		return Objects.hash(cast, description, id, language, languageId, length, rating, releaseYear, rentalDuration,
+				rentalRate, replacementCost, specialFeatures, title);
 	}
 
 	@Override
@@ -226,11 +261,14 @@ public class Film {
 		if (getClass() != obj.getClass())
 			return false;
 		Film other = (Film) obj;
-		return Objects.equals(description, other.description) && id == other.id && languageId == other.languageId
-				&& length == other.length && rating == other.rating && Objects.equals(releaseYear, other.releaseYear)
+		return Objects.equals(cast, other.cast) && Objects.equals(description, other.description) && id == other.id
+				&& Objects.equals(language, other.language) && languageId == other.languageId && length == other.length
+				&& Objects.equals(rating, other.rating) && Objects.equals(releaseYear, other.releaseYear)
 				&& rentalDuration == other.rentalDuration && Objects.equals(rentalRate, other.rentalRate)
 				&& Objects.equals(replacementCost, other.replacementCost)
-				&& Arrays.equals(specialFeatures, other.specialFeatures) && Objects.equals(title, other.title);
+				&& Objects.equals(specialFeatures, other.specialFeatures) && Objects.equals(title, other.title);
 	}
+
+
 
 }
