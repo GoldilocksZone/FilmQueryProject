@@ -51,6 +51,37 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		}
 		return null;
 	}
+	
+	@Override
+	public List<Film> findFilmByKeyword(String keyword) {
+		List<Film> films = new ArrayList<Film>();
+		String sql = "SELECT film.*, language.name FROM film JOIN language ON film.language_id = language.id WHERE film.description LIKE \"%?%\"";
+		
+		try (Connection conn = DriverManager.getConnection(URL, user, pass)) {
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, keyword);
+			ResultSet rs = stmt.executeQuery();
+			while(rs.next()) {
+				films.add(new Film(rs.getInt("id"),
+								rs.getString("title"),
+								rs.getString("description"),
+								rs.getDate("release_year").toLocalDate(),
+								rs.getShort("language_id"),
+								rs.getString("language.name"),
+								rs.getByte("rental_duration"),
+								rs.getBigDecimal("rental_rate"),
+								rs.getShort("length"),
+								rs.getBigDecimal("replacement_cost"),
+								rs.getString("rating"),
+								rs.getString("special_features"),
+								this.findActorsByFilmId(rs.getInt("id"))));						
+			}
+			return films;
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return null;
+	}
 
 	public Actor findActorById(int actorId) {
 		String sql = "SELECT * FROM actor WHERE id = ?";

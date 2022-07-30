@@ -3,6 +3,7 @@ package com.skilldistillery.filmquery.entities;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
 
 public class Film {
@@ -31,9 +32,9 @@ public class Film {
 	 * @param releaseYear
 	 * @param rating
 	 */
-	public Film(int id, String title, String description, LocalDate releaseYear, short languageId, String language, byte rentalDuration,
-			BigDecimal rentalRate, short length, BigDecimal replacementCost, String rating, String specialFeatures,
-			List<Actor> cast) {
+	public Film(int id, String title, String description, LocalDate releaseYear, short languageId, String language,
+			byte rentalDuration, BigDecimal rentalRate, short length, BigDecimal replacementCost, String rating,
+			String specialFeatures, List<Actor> cast) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
@@ -90,7 +91,7 @@ public class Film {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
-	
+
 	/**
 	 * @return the length
 	 */
@@ -235,14 +236,25 @@ public class Film {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("*".repeat(this.getTitle().length() + 11)).append("\n")
-		.append("* " + this.getTitle() + " (" + this.getReleaseYear().getYear() + ") *").append("\n")
-		.append("*".repeat(this.getTitle().length() + 11)).append("\n\n")
-		.append(this.getDescription()).append("\n\n")
-		.append("Rating: " + this.getRating() + " \t" + "Run Time: " + this.getLength() + " min" + "\t" + "Language: " + this.getLanguage()).append("\n")
-		.append("Special Features: " + this.getSpecialFeatures()).append("\n\n")
-		.append("Rental Rate: $" + this.getRentalRate() + "\t" + "Replacement Cost: $" + this.getReplacementCost()).append("\n")
-		.append("-".repeat(this.getTitle().length() + 11)).append("\n")
-		.append("\n");
+				.append("* " + this.getTitle() + " (" + this.getReleaseYear().getYear() + ") *").append("\n")
+				.append("*".repeat(this.getTitle().length() + 11)).append("\n\n").append(this.getDescription())
+				.append("\n\n")
+				.append("Rating: " + this.getRating() + " \t" + "Run Time: " + this.getLength() + " min" + "\t"
+						+ "Language: " + this.getLanguage())
+				.append("\n").append("Special Features: " + this.getSpecialFeatures()).append("\n\n")
+				.append("Rental Rate: $" + this.getRentalRate() + "\t" + "Replacement Cost: $"
+						+ this.getReplacementCost()).append("\n")
+				.append("Cast: ");
+
+		ListIterator<Actor> it = this.cast.listIterator();
+		while (it.hasNext()) {
+			Actor actor = it.next();
+			sb.append(actor.getFirstName() + " " + actor.getLastName());
+			if (it.hasNext()) {
+				sb.append(", ");
+			}
+		}
+		sb.append("\n").append("-".repeat(this.getTitle().length() + 11)).append("\n");
 		return sb.toString();
 	}
 
@@ -268,7 +280,5 @@ public class Film {
 				&& Objects.equals(replacementCost, other.replacementCost)
 				&& Objects.equals(specialFeatures, other.specialFeatures) && Objects.equals(title, other.title);
 	}
-
-
 
 }
