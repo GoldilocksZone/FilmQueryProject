@@ -287,7 +287,7 @@ public class Film {
 			}
 		}
 		
-		sb.append("\n").append("-".repeat(this.getTitle().length() + 11)).append("\n");
+		sb.append("\n").append("--------------------").append("\n");
 		return sb.toString();
 	}
 	
@@ -323,7 +323,7 @@ public class Film {
 			}
 		}
 		
-		sb.append("\n").append("-".repeat(this.getTitle().length() + 11)).append("\n");
+		sb.append("\n").append("--------------------").append("\n");
 		return sb.toString();
 	}
 
