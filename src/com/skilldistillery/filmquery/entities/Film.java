@@ -271,10 +271,8 @@ public class Film {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("*".repeat(this.getTitle().length() + 11)).append("\n")
-				.append("* " + this.getTitle() + " (" + this.getReleaseYear().getYear() + ") *").append("\n")
-				.append("*".repeat(this.getTitle().length() + 11)).append("\n\n").append(this.getDescription())
-				.append("\n\n")
+		sb.append("|| " + this.getTitle() + " (" + this.getReleaseYear().getYear() + ") ||").append("\n\n")
+				.append(this.getDescription()).append("\n\n")
 				.append("Rating: " + this.getRating() + "\t" + "Language: " + this.getLanguage()).append("\n")
 				.append("Cast: ");
 
@@ -295,10 +293,8 @@ public class Film {
 	
 	public String toStringDetails() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("*".repeat(this.getTitle().length() + 11)).append("\n")
-		.append("* " + this.getTitle() + " (" + this.getReleaseYear().getYear() + ") *").append("\n")
-		.append("*".repeat(this.getTitle().length() + 11)).append("\n\n").append(this.getDescription())
-		.append("\n\n")
+		sb.append("|| " + this.getTitle() + " (" + this.getReleaseYear().getYear() + ") ||").append("\n\n")
+		.append(this.getDescription()).append("\n\n")
 		.append("Rating: " + this.getRating() + "\t" + "Language: " + this.getLanguage()).append("\n")
 		.append("Run Time: " + this.getLength() + " min" + "\t" + "Category: " + this.getCategory()).append("\n")
 		.append("\n").append("Special Features: " + this.getSpecialFeatures()).append("\n\n")
