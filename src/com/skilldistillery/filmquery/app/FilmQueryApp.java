@@ -1,9 +1,11 @@
 package com.skilldistillery.filmquery.app;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 import com.skilldistillery.filmquery.database.DatabaseAccessor;
 import com.skilldistillery.filmquery.database.DatabaseAccessorObject;
@@ -27,9 +29,9 @@ public class FilmQueryApp {
 	private void launch() {
 		Scanner scanner = new Scanner(System.in);
 
-		System.out.println("******************");
-		System.out.println("* Film Query App *");
-		System.out.println("******************");
+		System.out.println("+----------------+");
+		System.out.println("+ Film Query App +");
+		System.out.println("+----------------+");
 		System.out.println();
 
 		startUserInterface(scanner);
@@ -40,20 +42,31 @@ public class FilmQueryApp {
 	private void startUserInterface(Scanner scanner) {
 		int userSelection;
 		boolean run = true;
+		List<Film> films;
 
 		while (run) {
+			films = new ArrayList<Film>();
 			printMainMenu();
 			userSelection = getUserSelection(scanner, new int[] { 1, 2, 9 });
 			switch (userSelection) {
 			case 1:
-				lookUpFilmById(scanner);
-				getFilmOption(scanner);
+				films.add(lookUpFilmById(scanner));
+				try {
+					printFilm(films.get(0), f -> System.out.println(f.toString()));
+					getFilmOption(scanner, films);
+				} catch (NullPointerException npe) {}
 				break;
 			case 2:
-				lookUpFilmByKeyword(scanner);
-				getFilmOption(scanner);
+				films = lookUpFilmByKeyword(scanner);
+				try {
+					for (Film film : films) {
+						printFilm(film, f -> System.out.println(f.toString()));
+					}
+					getFilmOption(scanner, films);
+				} catch (NullPointerException npe) {}
 				break;
 			case 9:
+				run = false;
 				break;
 			default:
 				System.out.println("Error. Program shutting down.");
@@ -79,6 +92,10 @@ public class FilmQueryApp {
 		System.out.println();
 	}
 
+	private void printFilm(Film film, Consumer<Film> c) {
+		c.accept(film);
+	}
+
 	private int getUserSelection(Scanner scanner, int[] validResponses) {
 		boolean validResponse = false;
 		int response = 0;
@@ -101,27 +118,32 @@ public class FilmQueryApp {
 
 		return response;
 	}
-	
-	private void getFilmOption(Scanner scanner) {
+
+	private void getFilmOption(Scanner scanner, List<Film> films) {
 		printFilmMenu();
 		switch (getUserSelection(scanner, new int[] { 1, 9 })) {
 		case 1:
-			// TODO: Print full description
+			for (Film film : films) {
+				printFilm(film, f -> System.out.print(f.toStringDetails()));
+			}
 			break;
 		case 9:
+			System.out.println("Exiting");
 			break;
 		default:
+			System.out.println("Default");
 			break;
 		}
 	}
 
-	private void lookUpFilmById(Scanner scanner) {
+	private Film lookUpFilmById(Scanner scanner) {
 		int filmId = getFilmId(scanner);
 		Film film = db.findFilmById(filmId);
 		if (film == null) {
 			System.out.println("Film not found.");
+			return null;
 		} else {
-			System.out.println(film);
+			return film;
 		}
 	}
 
@@ -149,16 +171,15 @@ public class FilmQueryApp {
 		return response;
 	}
 
-	private void lookUpFilmByKeyword(Scanner scanner) {
+	private List<Film> lookUpFilmByKeyword(Scanner scanner) {
 		String keyword = getFilmKeyword(scanner);
 		List<Film> films = db.findFilmByKeyword(keyword);
 		if (films.isEmpty()) {
 			System.out.println("No films found.");
+			return null;
 		} else {
 			System.out.println(films.size() + " films found matching the given search criteria:\n");
-			for (Film film : films) {
-				System.out.println(film);
-			}
+			return films;
 		}
 	}
 

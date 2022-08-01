@@ -2,18 +2,22 @@ package com.skilldistillery.filmquery.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class Film {
 	private byte rentalDuration;
 	private short languageId, length;
 	private int id;
 	private BigDecimal rentalRate, replacementCost;
-	private String title, description, language, rating, specialFeatures;
+	private String title, description, language, category, rating, specialFeatures;
 	private LocalDate releaseYear;
 	private List<Actor> cast;
+	Map<String, Set<Integer>> inventory;
 
 	public Film() {
 
@@ -33,14 +37,15 @@ public class Film {
 	 * @param rating
 	 */
 	public Film(int id, String title, String description, LocalDate releaseYear, short languageId, String language,
-			byte rentalDuration, BigDecimal rentalRate, short length, BigDecimal replacementCost, String rating,
-			String specialFeatures, List<Actor> cast) {
+			String category, byte rentalDuration, BigDecimal rentalRate, short length, BigDecimal replacementCost,
+			String rating, String specialFeatures, List<Actor> cast, Map<String, Set<Integer>> inventory) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.releaseYear = releaseYear;
 		this.languageId = languageId;
 		this.language = language;
+		this.category = category;
 		this.rentalDuration = rentalDuration;
 		this.rentalRate = rentalRate;
 		this.length = length;
@@ -48,6 +53,7 @@ public class Film {
 		this.rating = rating;
 		this.specialFeatures = specialFeatures;
 		this.cast = cast;
+		this.inventory = inventory;
 	}
 
 	/**
@@ -82,7 +88,7 @@ public class Film {
 	 * @return the language
 	 */
 	public String getLanguage() {
-		return language;
+		return new String(language);
 	}
 
 	/**
@@ -92,6 +98,20 @@ public class Film {
 		this.language = language;
 	}
 
+	/**
+	 * @return the category
+	 */
+	public String getCategory() {
+		return new String(this.category);
+	}
+	
+	/*
+	 * @param category the category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	
 	/**
 	 * @return the length
 	 */
@@ -152,7 +172,7 @@ public class Film {
 	 * @return the title
 	 */
 	public String getTitle() {
-		return title;
+		return new String(title);
 	}
 
 	/**
@@ -166,7 +186,7 @@ public class Film {
 	 * @return the description
 	 */
 	public String getDescription() {
-		return description;
+		return new String(description);
 	}
 
 	/**
@@ -180,7 +200,7 @@ public class Film {
 	 * @return the specialFeatures
 	 */
 	public String getSpecialFeatures() {
-		return specialFeatures;
+		return new String(specialFeatures);
 	}
 
 	/**
@@ -208,7 +228,7 @@ public class Film {
 	 * @return the rating
 	 */
 	public String getRating() {
-		return rating;
+		return new String(rating);
 	}
 
 	/**
@@ -231,7 +251,23 @@ public class Film {
 	public void setCast(List<Actor> cast) {
 		this.cast = cast;
 	}
+	
+	/**
+	 * @return the inventory
+	 */
+	public Map<String, Set<Integer>> getInventory() {
+		return this.inventory;
+	}
+	
+	/**
+	 * @param inventory the inventory to set
+	 */
+	public void setInventory(Map<String, Set<Integer>> inventory) {
+		this.inventory = inventory;
+	}
 
+	// regular display:	title, year, rating, description, language, cast
+	// details:			all film categories, all copies of film in inventory with their condition
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -239,29 +275,66 @@ public class Film {
 				.append("* " + this.getTitle() + " (" + this.getReleaseYear().getYear() + ") *").append("\n")
 				.append("*".repeat(this.getTitle().length() + 11)).append("\n\n").append(this.getDescription())
 				.append("\n\n")
-				.append("Rating: " + this.getRating() + " \t" + "Run Time: " + this.getLength() + " min" + "\t"
-						+ "Language: " + this.getLanguage())
-				.append("\n").append("Special Features: " + this.getSpecialFeatures()).append("\n\n")
-				.append("Rental Rate: $" + this.getRentalRate() + "\t" + "Replacement Cost: $"
-						+ this.getReplacementCost()).append("\n")
+				.append("Rating: " + this.getRating() + "\t" + "Language: " + this.getLanguage()).append("\n")
 				.append("Cast: ");
 
-		ListIterator<Actor> it = this.cast.listIterator();
-		while (it.hasNext()) {
-			Actor actor = it.next();
+		ListIterator<Actor> listIt = this.cast.listIterator();
+		while (listIt.hasNext()) {
+			Actor actor = listIt.next();
 			sb.append(actor.getFirstName() + " " + actor.getLastName());
+			if (listIt.hasNext()) {
+				sb.append(", ");
+			} else {
+				sb.append("\n");
+			}
+		}
+		
+		sb.append("\n").append("-".repeat(this.getTitle().length() + 11)).append("\n");
+		return sb.toString();
+	}
+	
+	public String toStringDetails() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("*".repeat(this.getTitle().length() + 11)).append("\n")
+		.append("* " + this.getTitle() + " (" + this.getReleaseYear().getYear() + ") *").append("\n")
+		.append("*".repeat(this.getTitle().length() + 11)).append("\n\n").append(this.getDescription())
+		.append("\n\n")
+		.append("Rating: " + this.getRating() + "\t" + "Language: " + this.getLanguage()).append("\n")
+		.append("Run Time: " + this.getLength() + " min" + "\t" + "Category: " + this.getCategory()).append("\n")
+		.append("\n").append("Special Features: " + this.getSpecialFeatures()).append("\n\n")
+		.append("Rental Rate: $" + this.getRentalRate() + "\t" + "Replacement Cost: $"
+				+ this.getReplacementCost()).append("\n")
+		.append("Cast: ");
+		
+		ListIterator<Actor> listIt = this.cast.listIterator();
+		while (listIt.hasNext()) {
+			Actor actor = listIt.next();
+			sb.append(actor.getFirstName() + " " + actor.getLastName());
+			if (listIt.hasNext()) {
+				sb.append(", ");
+			} else {
+				sb.append("\n");
+			}
+		}
+		
+		sb.append("Inventory: ");
+		Iterator<Map.Entry<String, Set<Integer>>> it = this.inventory.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Set<Integer>> condition = it.next();
+			sb.append(condition.getKey() + "(" + condition.getValue().size() +")");
 			if (it.hasNext()) {
 				sb.append(", ");
 			}
 		}
+		
 		sb.append("\n").append("-".repeat(this.getTitle().length() + 11)).append("\n");
 		return sb.toString();
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cast, description, id, language, languageId, length, rating, releaseYear, rentalDuration,
-				rentalRate, replacementCost, specialFeatures, title);
+		return Objects.hash(cast, category, description, id, language, languageId, length, rating, releaseYear,
+				rentalDuration, rentalRate, replacementCost, specialFeatures, title);
 	}
 
 	@Override
@@ -273,7 +346,8 @@ public class Film {
 		if (getClass() != obj.getClass())
 			return false;
 		Film other = (Film) obj;
-		return Objects.equals(cast, other.cast) && Objects.equals(description, other.description) && id == other.id
+		return Objects.equals(cast, other.cast) && Objects.equals(category, other.category)
+				&& Objects.equals(description, other.description) && id == other.id
 				&& Objects.equals(language, other.language) && languageId == other.languageId && length == other.length
 				&& Objects.equals(rating, other.rating) && Objects.equals(releaseYear, other.releaseYear)
 				&& rentalDuration == other.rentalDuration && Objects.equals(rentalRate, other.rentalRate)
